@@ -20,7 +20,6 @@ import cats.effect.IO
 import cats.effect.Resource
 import cats.effect.SyncIO
 import cats.effect.kernel.Deferred
-import cats.syntax.all._
 
 trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
 
@@ -36,7 +35,7 @@ trait CatsEffectFunFixtures extends FunFixtures { self: CatsEffectSuite =>
         setup: (TestOptions, T) => IO[Unit],
         teardown: T => IO[Unit]
     ): SyncIO[FunFixture[T]] = ResourceFunFixture { options =>
-      resource.flatTap(t => Resource.make(setup(options, t))(_ => teardown(t)))
+      resource.flatMap(t => Resource.make(setup(options, t))(_ => teardown(t)).map(_ => t))
     }
   }
 
